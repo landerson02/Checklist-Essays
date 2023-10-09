@@ -1,4 +1,3 @@
-# %%
 import random
 
 class Model:
@@ -22,10 +21,3 @@ class Model:
         else:
             return "Insufficient"
 
-# # Example usage:
-# if __name__ == "__main__":
-#     model_instance = Model("example_input")
-#     result = model_instance()
-#     print(result)
-
-# %%
