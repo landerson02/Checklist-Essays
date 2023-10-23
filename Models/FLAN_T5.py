@@ -3,7 +3,7 @@ from transformers import T5Tokenizer, T5ForConditionalGeneration
 import torch
 
 
-class Model:
+class Flan:
 
     # Initialize variables upon instantiation
     def __init__(self):
