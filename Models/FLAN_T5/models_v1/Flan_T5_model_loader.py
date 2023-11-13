@@ -1,3 +1,5 @@
+import tensorflow as tf
+
 
 def predict_essay_result(essay, model, tokenizer, concept):
     prompt = f"According to the following essay, classify the student's definition of {concept} as {{option_1: Acceptable}}, {{option_2: Unacceptable}}, {{option_3: Insufficient}}, or {{option_4: Not Found}}\n{essay}"
