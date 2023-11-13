@@ -19,7 +19,7 @@ class Flan:
         self.concepts_to_predict = ["potential energy", "kinetic energy", "Law of Conservation of Energy"]
 
         # Define possible outcome labels
-        self.outcome_labels = ["Acceptable", "Unacceptable", "Insufficient", "Not Found"]
+        self.outcome_labels = ["Acceptable", "Unacceptable", "Insufficient"]
 
         # Create a list to store predictions as dictionaries
         self.predictions_list = []
@@ -32,7 +32,7 @@ class Flan:
         for concept in self.concepts_to_predict:
             # Define a template for classification
             template = f"According to the following essay, is the student's definition of {concept} Acceptable, " \
-                       f"Unacceptable, Insufficient, or Not Found?\n{text}"
+                       f"Unacceptable, Insufficient?\n{text}"
 
             # Prepare the input by replacing placeholders
             formatted_input = template
