@@ -83,8 +83,8 @@ class Flan:
         lce_label = self.predict_essay_result(sample, self.lce_model, self.lce_tokenizer, 'LCE')
         # Compile the results into a dictionary
         results = {
-            "PE": pe_label,
-            "KE": ke_label,
-            "LCE": lce_label
+            "PE": pe_label.title(),
+            "KE": ke_label.title(),
+            "LCE": lce_label.title(),
         }
         return results
