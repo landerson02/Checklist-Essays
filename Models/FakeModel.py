@@ -16,12 +16,9 @@ class Model:
 
     def getRandomCategory(self):
         num = random.random()
-        if num < .25:
+        if num < .5:
             return "Acceptable"
-        elif num < .5:
-            return "Unacceptable"
-        elif num < .75:
-            return "Insufficient"
-        else:
-            return "Not Found"
+        return "Unacceptable"
 
+    def get_results(self, sample):
+        return self.__call__()
