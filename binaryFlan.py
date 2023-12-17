@@ -134,11 +134,11 @@ with open(filename, mode='w', newline='') as file:
     writer.writerows([["Test Category", "Test Type", "Test Description", "Sample",
                        "Expected PE", "Expected KE", "Expected LCE",
                        "Actual PE", "Actual KE,", "Actual LCE",
-                       "PE Result", "KE Result", "LCE Result", "Overall Result"]])
+                       "PE Result", "KE Result", "LCE Result", "Overall Result", "Testing for"]])
     print("Successfully created file")
 
 
-def writeData(category, type, description, data):
+def writeData(category, type, description, data, expecting):
     rows = [[] for _ in range(len(data))]
     for i in range(len(data)):
         rows[i] = ([category,
@@ -154,7 +154,9 @@ def writeData(category, type, description, data):
                     data[i]["results"]["PE"],
                     data[i]["results"]["KE"],
                     data[i]["results"]["LCE"],
-                    data[i]["results"]["Overall"]])
+                    data[i]["results"]["Overall"],
+                    expecting,
+                    ])
 
     with open(filename, mode='a', newline='') as file:
         writer = csv.writer(file)
@@ -169,60 +171,64 @@ samples = editor.template(
     pe_acceptable=PE_ACCEPTABLE
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Acceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_acceptable}",
     ke_acceptable=KE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Acceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_acceptable}.",
     lce_acceptable=LCE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Knowledge", "MFT", "Acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Knowledge", "MFT", "Acceptable definitions", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_unacceptable}",
     pe_unacceptable=PE_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_unacceptable}",
     ke_unacceptable=KE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_unacceptable}.",
     lce_unacceptable=LCE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Knowledge", "MFT", "Unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unacceptable definitions", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_insufficient}",
     pe_insufficient=PE_INSUFFICIENT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_insufficient}",
     ke_insufficient=KE_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_insufficient}.",
     lce_insufficient=LCE_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unacceptable definitions", data, "LCE")
 
-writeData("Knowledge", "MFT", "Unacceptable definitions", data)
 
 samples = editor.template(
     "{unrelated}.",
@@ -230,127 +236,134 @@ samples = editor.template(
 )
 
 data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "MFT", "Unrelated definitions", data, "Unrelated")
 
-writeData("Knowledge", "MFT", "Unrelated definitions", data)
 
 samples = editor.template(
     "Potential energy is {pe_acceptable}. Potential energy is {pe_unacceptable}.",
     pe_acceptable=PE_ACCEPTABLE, pe_unacceptable=PE_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "INV", "Acceptable definition followed by Unacceptable", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_acceptable}. Kinetic energy is {ke_unacceptable}.",
     ke_acceptable=KE_ACCEPTABLE, ke_unacceptable=KE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "INV", "Acceptable definition followed by Unacceptable", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_acceptable}. The Law of Conservation of energy states {lce_unacceptable}.",
     lce_acceptable=LCE_ACCEPTABLE, lce_unacceptable=LCE_UNACCEPTABLE,
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Knowledge", "INV", "Acceptable definition followed by Unacceptable", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Knowledge", "INV", "Acceptable definition followed by Unacceptable", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_unacceptable}. Potential energy is {pe_acceptable}",
     pe_acceptable=PE_ACCEPTABLE, pe_unacceptable=PE_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_unacceptable}. Kinetic energy is {ke_acceptable}",
     ke_acceptable=KE_ACCEPTABLE, ke_unacceptable=KE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_unacceptable}. The Law of Conservation of energy states {lce_acceptable}",
     lce_acceptable=LCE_ACCEPTABLE, lce_unacceptable=LCE_UNACCEPTABLE,
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_insufficient}. Potential energy is {pe_acceptable}",
     pe_insufficient=PE_INSUFFICIENT, pe_acceptable=PE_ACCEPTABLE
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_insufficient}. Kinetic energy is {ke_acceptable}",
     ke_insufficient=KE_INSUFFICIENT, ke_acceptable=KE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_insufficient}. The Law of Conservation of energy states {lce_acceptable}",
     lce_insufficient=LCE_INSUFFICIENT, lce_acceptable=LCE_ACCEPTABLE,
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by acceptable", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_insufficient}. Potential energy is {pe_unacceptable}",
     pe_insufficient=PE_INSUFFICIENT, pe_unacceptable=PE_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by unacceptable", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_insufficient}. Kinetic energy is {ke_unacceptable}",
     ke_insufficient=KE_INSUFFICIENT, ke_unacceptable=KE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by unacceptable", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_insufficient}. The Law of Conservation of energy states {lce_unacceptable}",
     lce_insufficient=LCE_INSUFFICIENT, lce_unacceptable=LCE_UNACCEPTABLE,
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Knowledge", "DIR", "Unacceptable definition followed by unacceptable", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Knowledge", "DIR", "Unacceptable definition followed by unacceptable", data, "LCE")
 
 samples = editor.template(
     "Potential energy is not {pe_acceptable}",
     pe_acceptable=PE_ACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Negation", "MFT", "Negation of acceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is not {ke_acceptable}",
     ke_acceptable=KE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Negation", "MFT", "Negation of acceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy does not state {lce_acceptable}.",
     lce_acceptable=LCE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Negation", "MFT", "Negation of acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Negation", "MFT", "Negation of acceptable definitions", data, "LCE")
 
 samples = editor.template(
     "Potential energy is not {pe_unacceptable}",
     pe_unacceptable=PE_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Negation", "MFT", "Negation of unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is not {ke_unacceptable}",
     ke_unacceptable=KE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Negation", "MFT", "Negation of unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy does not state {lce_unacceptable}.",
     lce_unacceptable=LCE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-writeData("Negation", "MFT", "Negation of unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Negation", "MFT", "Negation of unacceptable definitions", data, "LCE")
 
 PE_TYPO_CORRECT = [
     "pontenshul energy that body has becuse of its posiion relative to other bdies.",
@@ -370,21 +383,22 @@ samples = editor.template(
     pe_typo_correct=PE_TYPO_CORRECT
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of acceptable definitions", data, "PE")
 
 samples = editor.template(
     "{ke_typo_correct}",
     ke_typo_correct=KE_TYPO_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of acceptable definitions", data, "KE")
 
 samples = editor.template(
     "{lce_typo_correct}.",
     lce_typo_correct=LCE_TYPO_CORRECT
 )
 
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Robustness", "INV", "Misspelling of acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Robustness", "INV", "Misspelling of acceptable definitions", data, "LCE")
 
 PE_TYPO_INCORRECT = [
     "Potential energy i energy in moton.",
@@ -405,20 +419,21 @@ samples = editor.template(
     pe_typo_incorrect=PE_TYPO_INCORRECT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of unacceptable definitions", data , "PE")
 
 samples = editor.template(
     "{ke_typo_incorrect}",
     ke_typo_incorrect=KE_TYPO_INCORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "{lce_typo_incorrect}.",
     lce_typo_incorrect=LCE_TYPO_INCORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Misspelling of unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of unacceptable definitions", data, "LCE")
 
 PE_TYPO_INSUFFICIENT = [
     "The potentia energ at the top of te rollercoaer is 4.9 juls.",
@@ -438,20 +453,21 @@ samples = editor.template(
     pe_typo_insufficient=PE_TYPO_INSUFFICIENT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of insufficient definitions", data, "PE")
 
 samples = editor.template(
     "{ke_typo_insufficient}",
     ke_typo_insufficient=KE_TYPO_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of insufficient definitions", data, "KE")
 
 samples = editor.template(
     "{lce_typo_insufficient}.",
     lce_typo_insufficient=LCE_TYPO_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Misspelling of insufficient definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Misspelling of insufficient definitions", data, "LCE")
 
 PE_PARA_ACCEPTABLE = [
     "Energy that a body has because of its position relative to other bodies is potential energy",
@@ -471,20 +487,21 @@ samples = editor.template(
     pe_para_acceptable=PE_PARA_ACCEPTABLE
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of acceptable definitions", data, "PE")
 
 samples = editor.template(
     "{ke_para_acceptable}.",
     ke_para_acceptable=KE_PARA_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of acceptable definitions", data, "KE")
 
 samples = editor.template(
     "{lce_para_acceptable}.",
     lce_para_acceptable=LCE_PARA_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Robustness", "INV", "Paraphrased version of acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Robustness", "INV", "Paraphrased version of acceptable definitions", data, "LCE")
 
 PE_PARA_UNACCEPTABLE = [
     "The car loses energy as it goes down the hill, which is potential energy.",
@@ -505,20 +522,21 @@ samples = editor.template(
     pe_para_unacceptable=PE_PARA_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "{ke_para_unacceptable}.",
     ke_para_unacceptable=KE_PARA_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of unacceptable definitions", data , "KE")
 
 samples = editor.template(
     "{lce_para_unacceptable}.",
     lce_para_unacceptable=LCE_PARA_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Paraphrased version of unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of unacceptable definitions", data , "LCE")
 
 PE_PARA_INSUFFICIENT = [
     "The potential energy at the top of the rollercoaster equals 4.9 joules",
@@ -538,120 +556,126 @@ samples = editor.template(
     pe_para_insufficient=PE_PARA_INSUFFICIENT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of insufficient definitions", data, "PE")
 
 samples = editor.template(
     "{ke_para_insufficient}.",
     ke_para_insufficient=KE_PARA_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of insufficient definitions", data, "KE")
 
 samples = editor.template(
     "{lce_para_insufficient}.",
     lce_para_insufficient=LCE_PARA_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Paraphrased version of insufficient definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Paraphrased version of insufficient definitions", data, "LCE")
 
 samples = editor.template(
     "PE is {pe_acceptable}",
     pe_acceptable=PE_ACCEPTABLE
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of acceptable definitions", data, "PE")
 
 samples = editor.template(
     "KE is {ke_acceptable}",
     ke_acceptable=KE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of acceptable definitions", data, "KE")
 
 samples = editor.template(
     "LCE states {lce_acceptable}.",
     lce_acceptable=LCE_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Robustness", "INV", "Acronyms of acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Robustness", "INV", "Acronyms of acceptable definitions", data, "LCE")
 
 samples = editor.template(
     "PE is {pe_unacceptable}",
     pe_unacceptable=PE_UNACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "KE is {ke_unacceptable}",
     ke_unacceptable=KE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "LCE states {lce_unacceptable}.",
     lce_unacceptable=LCE_UNACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Acronyms of unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of unacceptable definitions", data, "LCE")
 
 samples = editor.template(
     "PE is {pe_insufficient}",
     pe_insufficient=PE_INSUFFICIENT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of insufficient definitions", data, "PE")
 
 samples = editor.template(
     "KE is {ke_insufficient}",
     ke_insufficient=KE_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of insufficient definitions", data, "KE")
 
 samples = editor.template(
     "LCE states {lce_insufficient}.",
     lce_insufficient=LCE_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Acronyms of insufficient definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Acronyms of insufficient definitions", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_acceptable}. {unrelated}.",
     pe_acceptable=PE_ACCEPTABLE, unrelated=UNRELATED, nsamples=10
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Adding random unrelated sentence to acceptable definition", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_acceptable}. {unrelated}.",
     ke_acceptable=KE_ACCEPTABLE, unrelated=UNRELATED, nsamples=10
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Adding random unrelated sentence to acceptable definition", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_acceptable}. {unrelated}.",
     lce_acceptable=LCE_ACCEPTABLE, unrelated=UNRELATED, nsamples=10
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Robustness", "INV", "Adding random unrelated sentence to acceptable definition", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Robustness", "INV", "Adding random unrelated sentence to acceptable definition", data, "LCE")
 
 samples = editor.template(
     "Potential energy is {pe_unacceptable}. {unrelated}.",
     pe_unacceptable=PE_UNACCEPTABLE, unrelated=UNRELATED, nsamples=10
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Adding random unrelated sentence to unacceptable definition", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_unacceptable}. {unrelated}.",
     ke_unacceptable=KE_UNACCEPTABLE, unrelated=UNRELATED, nsamples=10
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Adding random unrelated sentence to unacceptable definition", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_unacceptable}. {unrelated}.",
     lce_unacceptable=LCE_UNACCEPTABLE, unrelated=UNRELATED, nsamples=10
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Robustness", "INV", "Adding random unrelated sentence to unacceptable definition", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Robustness", "INV", "Adding random unrelated sentence to unacceptable definition", data, "LCE")
 
 PE_SYNONYM_CORRECT = [
     "energy that a body has because of its position relative to other bodies.",
@@ -672,20 +696,21 @@ samples = editor.template(
     pe_synonym_correct=PE_SYNONYM_CORRECT
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within acceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_synonym_correct}",
     ke_synonym_correct=KE_SYNONYM_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within acceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_synonym_correct}.",
     lce_synonym_correct=LCE_SYNONYM_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Taxonomy", "INV", "Synonyms within acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Taxonomy", "INV", "Synonyms within acceptable definitions", data, "LCE")
 
 PE_SYNONYM_INCORRECT = [
     "the energy lost as the car rolls down the hill.",
@@ -706,20 +731,21 @@ samples = editor.template(
     pe_synonym_incorrect=PE_SYNONYM_INCORRECT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_synonym_incorrect}",
     ke_synonym_incorrect=KE_SYNONYM_INCORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_synonym_incorrect}.",
     lce_synonym_incorrect=LCE_SYNONYM_INCORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Taxonomy", "INV", "Synonyms within unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within unacceptable definitions", data, "LCE")
 
 PE_SYNONYM_INSUFFICIENT = [
     "The potential energy at the tip of the rollercoaster is 4.9 joules.",
@@ -739,20 +765,21 @@ samples = editor.template(
     pe_synonym_insufficient=PE_SYNONYM_INSUFFICIENT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within insufficient definitions", data, "PE")
 
 samples = editor.template(
     "{ke_synonym_insufficient}",
     ke_synonym_insufficient=KE_SYNONYM_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within insufficient definitions", data, "KE")
 
 samples = editor.template(
     "{lce_synonym_insufficient}.",
     lce_synonym_insufficient=LCE_SYNONYM_INSUFFICIENT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Taxonomy", "INV", "Synonyms within insufficient definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Synonyms within insufficient definitions", data, "LCE")
 
 PE_NEGANT_CORRECT = [
     "energy that a body does not lack because of its position relative to other bodies.",
@@ -772,20 +799,21 @@ samples = editor.template(
     pe_negant_correct=PE_NEGANT_CORRECT
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Negated antonyms within acceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_negant_correct}",
     ke_negant_correct=KE_NEGANT_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Negated antonyms within acceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_negant_correct}.",
     lce_negant_correct=LCE_NEGANT_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-
-writeData("Taxonomy", "INV", "Negated antonyms within acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Taxonomy", "INV", "Negated antonyms within acceptable definitions", data, "LCE")
 
 PE_NEGANT_INCORRECT = [
     "energy not stationary.",
@@ -805,20 +833,21 @@ samples = editor.template(
     pe_negant_incorrect=PE_NEGANT_INCORRECT
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Negated antonyms within unacceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_negant_incorrect}",
     ke_negant_incorrect=KE_NEGANT_INCORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Negated antonyms within unacceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_negant_incorrect}.",
     lce_negant_incorrect=LCE_NEGANT_INCORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Taxonomy", "INV", "Negated antonyms within unacceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "INV", "Negated antonyms within unacceptable definitions", data, "LCE")
 
 PE_ANT_ACCEPTABLE = [
     "Potential energy is energy while moving",
@@ -838,20 +867,21 @@ samples = editor.template(
     pe_ant_acceptable=PE_ANT_ACCEPTABLE
 )
 data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "DIR", "Antonyms within acceptable definitions", data, "PE")
 
 samples = editor.template(
     "{ke_ant_acceptable}",
     ke_ant_acceptable=KE_ANT_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "DIR", "Antonyms within acceptable definitions", data, "KE")
 
 samples = editor.template(
     "{lce_ant_acceptable}",
     lce_ant_acceptable=LCE_ANT_ACCEPTABLE
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
-
-writeData("Taxonomy", "DIR", "Antonyms within acceptable definitions", data)
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Taxonomy", "DIR", "Antonyms within acceptable definitions", data, "LCE")
 
 PE_SPANISH_CORRECT = [
     "Potential energy is energy that a body has because of its position relativa a other bodies.",
@@ -874,17 +904,18 @@ samples = editor.template(
     pe_spanish_correct=PE_SPANISH_CORRECT,
 )
 data = getData(samples, {"PE": "Acceptable", "KE": "Unacceptable", "LCE": "Unacceptable"})
+writeData("Fairness", "INV", "Spanish translation within acceptable definitions", data, "PE")
 
 samples = editor.template(
     "Kinetic energy is {ke_spanish_correct}",
     ke_spanish_correct=KE_SPANISH_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+data = getData(samples, {"PE": "Unacceptable", "KE": "Acceptable", "LCE": "Unacceptable"})
+writeData("Fairness", "INV", "Spanish translation within acceptable definitions", data, "KE")
 
 samples = editor.template(
     "The Law of Conservation of energy states {lce_spanish_correct}.",
     lce_spanish_correct=LCE_SPANISH_CORRECT
 )
-data += getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
-writeData("Fairness", "INV", "Spanish translation within acceptable definitions", data)
-
+data = getData(samples, {"PE": "Unacceptable", "KE": "Unacceptable", "LCE": "Acceptable"})
+writeData("Fairness", "INV", "Spanish translation within acceptable definitions", data, "LCE")
